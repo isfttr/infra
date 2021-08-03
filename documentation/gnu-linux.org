@@ -1,0 +1,1534 @@
+#+TITLE: GNU/Linux
+- Tags :: [[file:20200326214654-tecnologia.org][Tecnologia]]
+
+* Common
+** Bash terminal
+- Tags ::
+[[https://devhints.io/bash][Bash cheatsheet]]
+
+https://www.youtube.com/watch?v=oxuRxtrO2A://www.youtube.com/watch?v=oxuRxtrO2Ag
+
+*** Bash scripts
+:PROPERTIES:
+:ID:       149fb41b-eb7a-46f0-b088-aa2937857407
+:END:
+https://kadekillary.work/post/bash-scripts/
+https://devhints.io/bash
+https://www.reddit.com/r/bash/comments/agi092/bash_scripting_cheatsheet/
+
+*** Customization
+
+*** Edit PATH
+https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path
+*** Long command line
+If you have a long command that your want to organize in lines, just add "\" at
+the end of the line and continue the same command on the next line.
+** Zsh shell
+Change to zshell:
+#+BEGIN_SRC bash
+# chsh -s $(which zsh)
+#+END_SRC
+*** Oh-My-Zsh
+[[https://github.com/robbyrussell/oh-my-zsh][robbyrussell/oh-my-zsh]]
+[[https://github.com/robbyrussell/oh-my-zsh/wiki/External-themes][external themes]]
+*** Plugins
+The =git-aliases= plugin has shortcuts for git [[https://github.com/peterhurford/git-aliases.zsh][peterhurford/git-aliases.zsh]]
+
+The =globalias= plugin does alias expansion [[https://blog.patshead.com/2011/07/automatically-expanding-zsh-global-aliases-as-you-type.html][patshead blog]]
+** Fish shell
+
+*** FISH: Friendly Interactive Shell
+
+Although I'm getting used to using the bash terminal, after
+watching [Luke's
+video](https://www.youtube.com/watch?v=C2a7jJTh3kU) on it
+got me thinking about trying it out. Then I listened to a
+episode of the [Linux Unplugged]() podcast that had an
+interview with one of the main devs for fish. I really got
+interested after that, mainly because one of the hosts said
+that because of the autocompletion feature
+- among others, he never had to make any configurations the
+rc file, which for me is kind of strange since I make
+changer to my =.bashrc= almost daily.
+
+*** Learning more
+
+My basic approach to learning more about it is just watch
+some youtube [ videos
+](https://www.youtube.com/results?search_query=fish+shell<Paste>)
+to see what people use it.
+** Git
+[[b][Git branching and merging strategies video]].
+[[https://devhints.io/git-branch][Git branches cheatsheet]]
+[[https://nvie.com/posts/a-successful-git-branching-model/][Vincent Driessen branching model]]
+
+*** Configuring user.mail
+And user.name
+
+#+BEGIN_SRC bash
+git config user.email "account@mail.com"
+git config user.name "accountname"
+#+END_SRC
+
+Verify with =git config --local -l=.
+*** Changing branch name refs/head error
+The head have been detached, using the branch name desired:
+
+#+BEGIN_SRC bash
+git checkout -b new_branch
+#+END_SRC
+
+*** Differences between git fetch and git pull
+Both are use to download new data from a remote repository.
+
+=git fetch origin= only downloads new data from a remote repository, but
+doesn't integrate this new data into your working files. Thus,
+it'll never manipulate or destroy anything.
+
+=git pull origin master= updates the current HEAD branch with the
+latest changes from the remote server. It downloads and
+integrates the changes into the working files. Thus, **you should
+not** have any uncommitted local changes before you pull. Use
+=git stash= to save local changes temporarily.
+
+*** Merging branches
+#+BEGIN_SRC bash
+git checkout master # change to the branch you want to receive the changes
+git merge --no-ff feature-branch # with the no-fast-forward option
+git branch -d feature-branch # in case you want to delete the feature branch
+#+END_SRC
+
+The =--no-ff= option causes the merge to always create a new
+commit object, even if the merging could be performed with a fast-forward.
+
+*** Creating a new branch
+#+BEGIN_SRC bash
+git checkout -b new-branch master
+
+#+END_SRC
+
+*** Git flow
+[[https://github.com/petervanderdoes/gitflow-avh][gitflow-avh]]
+*** Generating a new SSH key
+To generate a new SSH key:
+#+BEGIN_SRC bash
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f <filename>
+
+#+END_SRC
+*** Adding a SSH key to github account
+Install =xclip= first and then run:
+
+#+BEGIN_SRC bash
+xclip -sel clip < ~/.ssh/id_rsa.pub
+
+#+END_SRC
+
+Paste the copied public key to github.
+
+*** Configuring SSH url for a repository
+To configure push and pulling commits without having to enter
+username and password everytime, it is possible to use the SSH
+key and its password to do it (one less step).
+
+First, change from https url to a ssh url by typing:
+#+BEGIN_SRC bash
+git remote -v #check the current urls
+git remote set-url origin git@github.com:username/repository.git
+git remote -v #check the new urls
+
+#+END_SRC
+
+*** How to git clone existing directory
+
+This is for the situation when I want to have access to the
+same git repository remotely from the main computer. This
+will effectively clone the contents of the repo and give me
+access to make pushes and pulls into this other machine.
+
+#+BEGIN_SRC sh
+cd into/folder
+
+git init
+
+git remote add origin PATH/TO/REPO
+
+git fetch
+
+git checkout -t origin/master -f
+#+END_SRC
+
+*** How to make a git bare repository
+(https://www.youtube.com/watch?v=tBoLDpTWVOM)
+(https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/)
+
+*** How to manage dotfiles
+
+The way I'm currently using git is for saving and tweaking
+my configuration files and saving them to the cloud so I can
+effortlessly pull them later. But the main downside is using
+symlinks because they don't update automatically and it is a
+pain to setup multiple symlinks in one go.
+
+I have seen a video by Wolfgang on [[https://www.reddit.com/r/vim/comments/7wqv3z/start_using_vim_with_tmux_and_zsh_build_a/][=stow=]] but it is not
+ideal if you're using multiple machines. The other
+alternative is from [[https://github.com/wincent/wincent][ wincent ]] (he also has a [[https://www.youtube.com/watch?v=__0Dquj7y9g][channel]]).
+
+**** Wincent
+
+From what I can gather, it uses Ansible, that is a RedHat
+tool for automation. In the git page says that is to be used
+with RedHat like linuxes and MacOS, and that might be an
+issue.
+
+From the git page it also says that it comes with very
+intricate and complex mutt configuration using `isync`
+instead of `offlineimaprc`. Wincent did a
+[screencast][^wincentscr] explaining how it works.
+
+**** For managing differences in the MacOS machines
+
+It might be the best alternative for using with the MacOS
+machines, creating a specific repo for them and a similar
+for running in the ArchLabs machines.
+
+*** How to use tags
+
+Tags are straight forward. Basically, whenever you think you
+want to make a new version you can make using the =git tag=
+command and you also can tag later.
+
+On =magit= you can tag pretty easily but you can tag later
+using magit. For that you need to do it from the terminal.
+Simple syntax for tagging later is =git tag -a v0.1 8238h2=
+with the identification of the commit.
+
+For general tagging just run =magit-tag= and it will show
+the options.
+
+You can also push commits until a certain point and using
+=git push origin v0.1=, or push all tags using =git push
+origin --tags=.
+
+Don't forget to push the tag together, when there is one.
+
+[[https://git-scm.com/book/en/v2/Git-Basics-Tagging][Git Basics - Tagging]]
+**** More about versioning
+Given a version number MAJOR.MINOR.PATCH, increment the:
+
+*MAJOR* version when you make incompatible API changes,
+*MINOR* version when you add functionality in a
+*backwards-compatible manner, and PATCH* version when you
+*make backwards-compatible bug fixes.
+
+Additional labels for pre-release and build metadata are
+available as extensions to the MAJOR.MINOR.PATCH format.
+
+[[https://semver.org/][Semantic Versioning]]
+*** How to use version control for documents
+I can use version control for documents that will have many
+modifications and use branches for modifications in the
+document to be sent to a journal, for example.
+
+It can be used as a way for contributions in the document
+that can be reversed at a later date.
+
+Also it is useful to use tags for the versions that are
+important, for example, drafts that are sent to someone. The
+cool thing is that I don't need to stop writing on that
+document until I receive some response, I would just diff it
+and see the changes that should be implemented in the main
+document.
+
+[[https://jabranham.com/blog/2015/09/version-control/][J. Abraham: version control]]
+**** Initial thoughts
+As a way to make version control for org files, I could just
+create private repo for my entire =/org= dir. The problem is
+that a lot of different documents would be bundled in single
+commits. I think that the best way is to make single repos
+for those that will be kept under version control. For
+example, I don't think that there is a need to keep under
+version control files that are changed everyday, like
+GNU/Linux, Emacs and todo. But for more important ones that
+will require drafts, comments and publications, I think it
+is needed.
+
+**** Strategy definition
+The problem is that theoretically I will not use the same
+file structure that I have setup for my entire work in
+OneDrive. This basically transfers most of the work to a new
+file structure to be controlled. The other cool thing is
+that in this way I can control a single project per
+directory, concentrating vital information in just one
+place, instead of having them all over the place.
+
+The main strategy now is to create a new directory with only
+the essential materials that are part of the dissertation,
+including tables of data, figures, and etc, and make a
+initial commit on that.
+
+**** Reorganization
+The reorganization will consist on a much needed rename of
+directories, discarding use of roman numerals and other
+number on the front of directories. The following step will
+be to separate files between those that are under version
+control and others that are not. For this to succeed, I will
+use the same name of the dir as the name of the repo.
+
+Directories under version control need to be small or have a
+specific purpose for its creation.
+
+Every directory with version control will be named =dirname-git=.
+
+**** First try
+The main document that I can use this technique right now is
+my dissertation paper which has suffered greatly because of
+different versions and comments made to the documents to the
+point of that it unrecoverable and I had to ditch the =docx=
+version for =latex=.
+
+I created a workspace directory for version controlled
+documents and moved the current project to there. Each
+directory inside there will be a different git repository.
+
+I added a =README.md= document for easy documentation for
+the causes of the creation of repository.
+*** How to undo git init
+In case a =git init= is done erroneously, it can be undone
+by removing the =.git= file.
+
+#+BEGIN_SRC bash
+rm -rf .git
+#+END_SRC
+*** How to switch between branches
+Before switching make sure to commit the last changes and
+push to the branch. The switching is done by using the
+command =checkout=.
+*** How to rebase a fork
+Add the original repository as a =upstream= remote branch:
+#+BEGIN_SRC bash
+git remote add upstream https://github.com/account/upstream-rep.git
+#+END_SRC
+
+Fetch all the changes into this new branch:
+#+BEGIN_SRC bash
+git fetch
+#+END_SRC
+
+Checkout to your master branch:
+#+BEGIN_SRC bash
+git checkout master
+#+END_SRC
+
+And rebase your =master= branch onto your =upstream=:
+#+BEGIN_SRC bash
+git rebase upstream master
+#+END_SRC
+*** How to make own git server
+https://www.linux.com/learn/how-run-your-own-git-server
+*** How to sign commits
+Signing commits gives them a "verified" badge.
+
+First list the =gpg keys= that are in the system:
+#+BEGIN_SRC bash
+gpg --list-secret-keys --keyid-format LONG
+
+#+END_SRC
+
+Copy what it is output after =sec rsa4096/= and use to run the
+following command:
+#+BEGIN_SRC bash
+gpg --armor --export 3AA5C34371567BD2
+
+#+END_SRC
+Use the output to create a new gpg-key at the github website.
+
+Configure a gpg key locally on the repository or globally:
+#+BEGIN_SRC bash
+git config user.signingkey 3AA5C34371567BD2
+git config --global user.signingkey 3AA5C34371567BD2
+#+END_SRC
+
+Configure commits to be signed:
+#+BEGIN_SRC bash
+git config commit.gpgsign true
+git config --global commit.gpgsign true
+git commit -S -m your commit message
+#+END_SRC
+*** How to set a git repo on a server
+[[https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server][Git - Setting Up the Server]]
+Remember to add all the possible SSH keys to authorized_keys file in the
+beginning, because it could run into problems when trying to add later.
+[[https://www.youtube.com/watch?v=ju9loeXNVW0][Setting up *Your Own* Git Server - YouTube]]
+If there is a problem with permissions while setting up the server
+[[https://andrey.mikhalchuk.com/2013/03/02/git-remote-rejected-master-master-na-unpacker-error.html][GIT: ! {remote rejected} master -> master (n/a (unpacker error)) – Andrey Mik...]]
+Repeat the process for each file or folder to make the user the owner and not root.
+
+[[https://blog.softhints.com/add-ssh-key-and-permission-denied-publickey/][Add SSH key and Permission denied (publickey) - Softhints]]
+** GnuPG
+[[https://devhints.io/gnupg][GnuPG cheatsheet]]
+
+*** Compression of files
+
+For a single file:
+
+#+BEGIN_SRC sh
+# to compress
+$ gzip file
+
+# to extract
+$ gunzip file.gz
+#+END_SRC
+
+For multiple files:
+
+#+BEGIN_SRC sh
+# to compress
+$ tar cvf file.tar file1 file2 ...
+
+# to extract
+$ tar xvf file.tar
+#+END_SRC
+
+=tar= can also be use to extract =rpm= files, although it
+might not work on Arch - but works on Mac. To extract =rpm=
+use the =bsdtar= command.
+
+*** Encryption of a file
+The =openssl= needs a change of the name from to encrypt.
+
+#+BEGIN_SRC sh
+
+# Encrypt
+gpg -c file #will generate file.gpg
+openssl aes-256-cbc -a -pbkdf2 -in file -out file.d
+
+# decrypt
+gpg file.gpg
+openssl aes-256-cbc -d -a -pbkdf2 -in file.d -out file
+#+END_SRC
+*** Generate key
+#+BEGIN_SRC bash
+gpg --gen-key
+#+END_SRC
+
+** Window Managers
+*** i3wm
+**WARNING: DO NOT RESTART I3 WITH MOD+SHIFT+R**
+Currently there is a problem with the =i3-msg restart=
+command that makes the system crash.
+
+**** How to create dropdown scratchpads
+To be used with terminal windows that are set to do specific
+tasks and that the keybindings are used to show/hide the
+windows.
+
+Below is two simple examples using =tmux= and =R=.
+
+***** Tmux
+
+First binding will open =tmux= but inside it'll be needed to
+run the restore command with =C-a C-r=.
+
+#+BEGIN_SRC .config/i3/config
+for_window [instance="work"] floating enable
+for_window [instance="work"] resize set 625 500
+for_window [instance="work"] move scratchpad
+for_window [instance="work"] border pixel 5
+exec --no-startup-id $term -n dropdown -e tmux
+#+END_SRC
+
+After restoring the last sessions, it'll be possible to
+attach existing sessions using something like the dropdown below:
+
+#+BEGIN_SRC .config/i3/config
+for_window [instance="work"] floating enable
+for_window [instance="work"] resize set 625 500
+for_window [instance="work"] move scratchpad
+for_window [instance="work"] border pixel 5
+exec --no-startup-id $term -n dropdown -e tmux attach -t work
+#+END_SRC
+
+***** Calculator in R
+
+To run a calculator window:
+
+#+BEGIN_SRC .config/i3/config
+for_window [instance="calculator"] floating enable
+for_window [instance="calculator"] resize set 625 500
+for_window [instance="calculator"] move scratchpad
+for_window [instance="calculator"] border pixel 5
+exec --no-startup-id $term -n calculator -f monospace:pixelsize=20 -e R -q
+#+END_SRC
+
+[[https://www.youtube.com/watch?v=q-l7DnDbiiU][Luke Smith: dropdown terminals in i3]]
+
+**** [2/4] Add binding modes
+***** binding mode for quickly accessing files
+This one might be useful but, like the other is not that
+useful since there are aliases already setup for doing the
+same thing.
+
+To do this it might be necessary to make a script for
+opening the said file and then it'll be called by the
+keybinding.
+***** binding for lock/logout/reboot/shutdown
+Don't think this is necessary since there is rofi setup. The
+problem with rofi is that it tends to popup after the screen
+is locked, which gives a weird effect.
+***** [X] binding mode for resizing windows
+CLOSED: [2019-01-21 Mon 09:15] It is needed because emacs
+has a conflict with M-up (it is used to reorder topics in
+org-mode)
+***** [X] binding for changing keymaps
+CLOSED: [2019-01-21 Mon 09:45] Doesn't really serve a
+purpose since that is only important on text based
+applications where I already can input the command manually
+or via a alias.
+**** Change to statusbar/polybar
+***** https://github.com/x70b1/polybar-scripts
+***** https://www.youtube.com/watch?v=7RNgpvBMua0&feature=share
+**** Check out i3blocks
+https://www.reddit.com/r/archlinux/comments/37da4o/i3_users_which_status_bar_are_you_using_and_why/
+**** Check out i3lock
+https://github.com/PandorasFox/i3lock-color
+**** [X] gpg keys
+***** https://www.youtube.com/watch?v=DMGIlj7u7Eo&feature=share
+*** bspwm
+
+**** bspwmrc
+Model for a =bspwmrc= file:
+#+BEGIN_SRC bash
+#! /bin/sh
+
+sxhkd &
+$HOME/.config/polybar/launch.sh &
+$HOME/.fehbg &
+
+bspc monitor -d I II III IV V VI VII VIII IX X
+
+bspc config border_width         2
+bspc config window_gap           0
+
+bspc config split_ratio          0.52
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+bspc config focus_follows_pointer true
+
+bspc config click_to_focus button1
+bspc config pointer_modifier mod1 #drag floating windows with mous
+
+# start up  programs
+bspc rule -a St desktop=^1 state=floating -o; st &
+bspc rule -a Firefox desktop=^2 state=tiled; firefox &
+
+bspc rule -a Emacs desktop=^3 state=tiled
+bspc rule -a Stremio desktop=^5 state=fullscreen
+
+#bspc rule -a Gimp desktop='^8' state=floating follow=on
+#bspc rule -a Chromium desktop='^2'
+#bspc rule -a mplayer2 state=floating
+#bspc rule -a Kupfer.py focus=on
+#bspc rule -a Screenkey manage=off
+#+END_SRC
+
+**** sxhkdrc
+Model for a =sxhkdrc= file:
+#+BEGIN_SRC shell
+
+#
+# wm independent hotkeys
+#
+
+# terminal emulator
+super + Return
+	st
+
+# program launcher
+super + @space
+	dmenu_run
+
+# make sxhkd reload its configuration files:
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# lock screen
+super + z
+        i3lock-fancy
+
+#
+# bspwm hotkeys
+#
+
+# quit bspwm normally
+super + alt + Escape
+	bspc quit
+
+# close and kill
+super + {_,shift + }w
+	bspc node -{c,k}
+
+# alternate between the tiled and monocle layout
+super + m
+	bspc desktop -l next
+
+# if the current node is automatic, send it to the last manual, otherwise pull the last leaf
+super + y
+	bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
+
+# swap the current node and the biggest node
+super + g
+	bspc node -s biggest
+
+#
+# state/flags
+#
+
+# set the window state
+super + {t,shift + t,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# set the node flags
+super + ctrl + {x,y,z}
+	bspc node -g {locked,sticky,private}
+
+#
+# focus/swap
+#
+
+# focus the node in the given direction
+super + {_,shift + }{h,j,k,l}
+	bspc node -{f,s} {west,south,north,east}
+
+# focus the node for the given path jump
+super + {p,b,comma,period}
+	bspc node -f @{parent,brother,first,second}
+
+# focus the next/previous node in the current desktop
+super + {_,shift + }c
+	bspc node -f {next,prev}.local
+
+# focus the next/previous desktop in the current monitor
+super + bracket{left,right}
+	bspc desktop -f {prev,next}.local
+
+# focus the last node/desktop
+super + {grave,Tab}
+	bspc {node,desktop} -f last
+
+# focus the older or newer node in the focus history
+super + {o,i}
+	bspc wm -h off; \
+	bspc node {older,newer} -f; \
+	bspc wm -h on
+
+# focus or send to the given desktop
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+#
+# preselect
+#
+
+# preselect the direction
+super + ctrl + {h,j,k,l}
+	bspc node -p {west,south,north,east}
+
+# preselect the ratio
+super + ctrl + {1-9}
+	bspc node -o 0.{1-9}
+
+# cancel the preselection for the focused node
+super + ctrl + space
+	bspc node -p cancel
+
+# cancel the preselection for the focused desktop
+super + ctrl + shift + space
+	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+
+#
+# move/resize
+#
+
+# expand a window by moving one of its side outward
+super + alt + {h,j,k,l}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+# contract a window by moving one of its side inward
+super + alt + shift + {h,j,k,l}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# move a floating window
+super + {Left,Down,Up,Right}
+	e ---#
+#
+
+# grab focus on mouse click
+~button1
+    bspc pointer -g focus
+
+# move/resize with mouse
+super + button{1-3}
+    bspc pointer -g {move,resize_side,resize_corner}
+
+super + !button{1-3}
+    bspc pointer -t %i %i
+
+super + @button{1-3}
+    bspc pointer -uspc node -v {-20 0,0 20,0 -20,20 0}
+
+#+END_SRC
+
+**** Initial explorations
+***** Initial questions
+If I ever consider changing to bspwm over i3 I'll use the
+this video by [[https://www.youtube.com/watch?v=jLZbk1-wwVA][Wolfgang]] as reference as well the following
+comment also by him
+
+#+BEGIN_QUOTE
+Q: How to move from i3 to BSPWM?
+
+A: by wolfang
+1.) Move your autostart portion to .xinitrc
+2.) Open sxhkd and i3 configs side to side and transfer the
+keybindings (sxhkd's syntax is pretty easy to understand, so
+you shouldn't have any problems here)
+3.) Open the bspwm config and change your workspace names
+(optionally)
+4.) For the panel, polybar should work out of the box, the syntax is
+also really easy to understand.
+
+#+END_QUOTE
+
+***** What's different from i3?
+
+The main difference is that bspwm is just a window manager,
+while i3 manages more than the windows, including status bar
+and keyboard daemon - which I don't realy know what is but I
+think is related to keybindings.
+
+Related to the keybindings not being tied to i3 might be a
+great thing, since I'll be able to test other window
+managers and still keep the same keybindings. bspwm is often
+used with `sxhkd`.
+
+It doesn't include gaps, but there's a fork by airbladder.
+***** Installation
+To move the autostart section from the i3 config file to
+=.xinitrc= it is needed to first copy the file to =$HOME=.
+
+#+BEGIN_SRC sh
+cp /etc/X11/xinit/xinitrc ~/.xinitrc
+#+END_SRC
+
+[[https://wiki.archlinux.org/index.php/Xinit][ArchWiki: xinit]]
+
+****** Set xorg as systemd service
+To make sxhkd run as a systemd service it is needed to first
+run xorg as a systemd service because it is a dependency.
+
+Make xorg run as root for any user by editing
+=/etc/X11/Xwrapper.config=:
+
+#+BEGIN_SRC language
+allowed_users=anybody
+needs_root_rights=yes
+#+END_SRC
+
+Create the following service
+=~/.config/systemd/user/xorg@.socket=:
+
+#+BEGIN_SRC language
+[Unit]
+Description=Socket for xorg at display %i
+
+[Socket]
+ListenStream=/tmp/.X11-unix/X%i
+#+END_SRC
+
+And =~/.config/systemd/user/xorg@.service=:
+
+#+BEGIN_SRC language
+[Unit]
+Description=Xorg server at display %i
+
+Requires=xorg@%i.socket
+After=xorg@%i.socket
+
+[Service]
+Type=simple
+SuccessExitStatus=0 1
+
+ExecStart=/usr/bin/Xorg :%i -nolisten tcp -noreset -verbose 2 "vt${XDG_VTNR}"
+#+END_SRC
+
+Where =${XDG_VTNR}= is the virtual terminal where xorg will
+be launched, either hard-coded in a service or by being set
+in the systemd environment by  running:
+
+#+BEGIN_SRC sh
+systemctl --user set-environment XDG_VTNR=1
+#+END_SRC
+
+#+RESULTS:
+
+The =DISPLAY= variable is set by running a script located at
+=xinit= folder, to make sure it is correctly set in the
+environment. This is only needed if it will run anything
+non-standard, not the case here.
+
+Enable socket activation for xorg on display 0 and tty2
+would do:
+
+#+BEGIN_SRC sh
+systemctl --user set-environment XDG_VTNR=2     # So that xorg@.service knows which vt use
+systemctl --user start xorg@0.socket            # Start listening on the socket for display 0
+#+END_SRC
+
+#+RESULTS:
+
+Set on =.bash_profile= the definition for =XDG_VTNR=:
+
+#+BEGIN_SRC
+XDG_VTNR=2
+#+END_SRC
+
+[[https://wiki.archlinux.org/index.php/Systemd/User#Xorg_as_a_systemd_user_service][ArchWiki: xorg]]
+
+****** Set sxhkd
+Create =~/.config/systemd/user/sxhkd.service=:
+
+#+BEGIN_SRC language
+[Unit]
+Description=Simple X Hotkey Daemon
+Documentation=man:sxhkd(1)
+BindsTo=xorg@.service
+After=xorg@.service
+
+[Service]
+ExecStart=/usr/bin/sxhkd
+ExecReload=/usr/bin/kill -SIGUSR1 $MAINPID
+
+[Install]
+WantedBy=graphical.target
+#+END_SRC
+
+Run the following command to start the =sxhkd.service=:
+
+#+BEGIN_SRC sh
+systemctl --user enable --now sxhkd
+#+END_SRC
+
+#+RESULTS:
+
+[[https://wiki.archlinux.org/index.php/Sxhkd][ArchWiki: sxhkd]]
+****** Using only packages instead of services
+Maybe there is a better way using packages on the repos.
+Packages that are available are =archlabs-skel-bspwm= and =bspwm=.
+
+[[https://classicforum.manjaro.org/index.php?topic=18970.0][Manjaro bspwm tutorial]]
+***** Configuring bspwm options
+[[https://www.reddit.com/r/unixporn/comments/74z2z6/easily_getting_started_with_bspwm_and_polybar/][Guide on unixporn by /u/volteos]]
+[[https://gitlab.com/protesilaos/dotfiles/tree/master/bspwm][protesilaos/dotfiles/bspwm]]
+[[https://arcolinuxd.com/2-where-is-the-bspwm-configuration-and-how-to-set-it-up/][Guide from ArcoLinuxD on bspwm]]
+*** dwm
+** gnome-shell
+Instalando gnome no arch linux
+https://www.youtube.com/watch?v=tsXXwn4jXz8
+
+Personalizando arch linux com gnome
+https://www.youtube.com/watch?v=ii7R1uhq8Q4
+** st - suckless terminal
+LukeSmithxyz/st
+
+With dmenu it is possible to:
+- follow urls with =Alt-l=
+- copy urls with =Alt-y=
+- copy the output of commands with =Alt-o=
+** dmenu
+[[https://www.reddit.com/r/i3wm/comments/78dtn7/how_to_change_dmenus_default_colors/][Change colors]]
+
+Make a dropdown terminal to run quick comands
+
+** dotfiles
+Using the git bare method seems to be the most efficient way to
+manage dotfiles, without the use of various symlinks.
+
+There is a specific repository on github for this.
+
+Each system shall have a specific branch to track dotfiles.
+
+https://github.com/isfttr/dotfiles
+https://www.atlassian.com/git/tutorials/dotfiles
+
+** Cron jobs
+To create a new cronjob use the command =crontab -e=.
+To list the current cronjobs use the command =crontab -l=
+
+*** Ideas for cronjobs
+Making cronjobs rely on making bash scripts and they're not
+as complicated as I antecipated. Actually is just a sequence
+of bash commands. To run a bash script, it is just needed
+run =bash script.sh=. To learn more go to [[id:149fb41b-eb7a-46f0-b088-aa2937857407][Bash scripts]].
+
+**** [X] A cronjob that downloads packages daily:
+CLOSED: [2019-07-10 Wed 21:17]
+***** to download: pacman -Syuw
+***** to install: pacman -Su
+****  add cronjob to periodically load new content on newsboat using cronie
+***** /usr/bin/newsboat -x reload
+*** For reference
+**** [[https://www.youtube.com/watch?v=rgSxYvFWjUY&feature=share][ watch ]]
+**** [[https://wiki.archlinux.org/index.php/Cron][ArchWiki: Cronjobs]]
+** mpd + ncmpcpp
+Start the configuration by installing =mpd=. Then make the
+directory and copy the mock configuration file to the new
+directory.
+
+#+BEGIN_SRC sh :results output
+mkdir ~/.config/mpd
+cp /usr/share/doc/mpd/mpdconf.example ~/.config/mpd/mpd.conf
+#+END_SRC
+
+#+RESULTS:
+
+After that, go to the directory and open =mpd.conf= and
+uncomment the options. After uncommenting and creating
+needed directories and changing the necessary paths, run the
+command:
+
+#+BEGIN_SRC sh
+mpd mpd.conf
+#+END_SRC
+
+Open the chosen interface, in this case =ncmpcpp= running
+the following command:
+
+#+BEGIN_SRC sh
+ncmpcpp update
+#+END_SRC
+
+*** ncmpcpp config file
+After the installation the initial setup, the configuration
+file needs to be copied and changed in =~/.ncmpcpp=
+directory.
+
+#+BEGIN_SRC sh
+cp /usr/share/doc/ncmpcpp/config ~/.ncmpcpp/config
+#+END_SRC
+
+#+RESULTS:
+
+Configuring mpd to autostart on =.Xprofile=:
+#+BEGIN_SRC
+# MPD daemon start (if no other user instance exists)
+[ ! -s ~/.config/mpd/pid ] && mpd
+#+END_SRC
+*** Using ncmpcpp
+
+| key | Function (Views) | key | Playback mode | Other UI | Function                  |
+|-----+------------------+-----+---------------+----------+---------------------------|
+|   1 | Current playlist | r   | repeat        | q        | Quit                      |
+|   2 | File browser     | z   | random        | f        | Forward                   |
+|   3 | DB library       | y   | single        | b        | Backward                  |
+|   4 | Library          | R   | consume       | \        | Switch classic/altn views |
+|   5 | Playlist editor  | x   | crossfade     | #        | Display bitrate           |
+|   6 | Tag editor       |     |               | i        | Song info                 |
+|   7 | Output selector  |     |               | I        | Artist info               |
+|   8 | Music visualizer |     |               | L        | Suffle lyric databases    |
+|   = | Clock            |     |               | l        | Retrieve lyrics           |
+|  F1 | Help             |     |               | >        | Next track                |
+|     |                  |     |               | <        | Previous track            |
+|     |                  |     |               | p        | Play/pause                |
+|     |                  |     |               | +        | increase vol.             |
+|     |                  |     |               | -        | decrease vol.             |
+
+[[https://wiki.archlinux.org/index.php/Ncmpcpp][ArchWiki: ncmpcpp]]
+[[https://pkgbuild.com/~jelle/ncmpcpp/][ncmpcpp: cheat sheet]]
+*** References
+Configure the music player with the ncmpcpp + mpd + mpc
+using the following links:
+**** https://www.youtube.com/watch?v=sZIEdI9TS2U&t=341s
+**** https://www.youtube.com/watch?v=Jk8hn8xAgzo
+**** https://computingforgeeks.com/how-to-configure-mpd-and-ncmpcpp-on-linux/
+**** More configuration files at https://github.com/LukeSmithxyz/voidrice/blob/master/.config/ncmpcpp/config
+** cmus
+
+** Neovim
+*** Text wrapping is preventing bullets from autocompleting in markdown.
+*** Check this plugins out:
+**** ctrl-space https://github.com/vim-ctrlspace/vim-ctrlspace
+**** vim-workspace https://github.com/thaerkh/vim-workspace
+**** vim-indentguides https://github.com/thaerkh/vim-indentguides
+**** vimade https://github.com/TaDaa/vimade
+**** vimwiki config https://github.com/gotbletu/shownotes/blob/master/vimwiki.md
+**** vim-iris mail https://github.com/soywod/iris.vim
+**** fzf https://github.com/junegunn/fzf#installation
+*** Vim-Plug
+#+BEGIN_SRC bash
+curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+#+END_SRC
+
+| Command                       | Description                                                        |
+|-------------------------------+--------------------------------------------------------------------|
+| PlugInstall [name ...]        | Install plugins                                                    |
+| PlugUpdate [name ...]         | Install or update plugins                                          |
+| PlugClean[!]                  | Remove unused directories (bang version will clean without prompt) |
+| PlugUpgrade                   | Upgrade vim-plug itself                                            |
+| PlugStatus                    | Check the status of plugins                                        |
+| PlugDiff                      | Examine changes from the previous update and the                   |
+| pending changes               |                                                                    |
+| PlugSnapshot[!] [output path] | Generate script for restoring the current snapshot of the plugins  |
+*** Install pynvim
+#+BEGIN_SRC bash
+sudo pip install pynvim
+#+END_SRC
+*** Deoplete
+Make sure =pip2= is installed.
+
+#+BEGIN_SRC bash
+pip2 install --user neovim
+pip3 install --user neovim
+#+END_SRC
+
+*** [X] Create a vim-airline theme for gruvbox
+CLOSED: [2019-01-27 Sun 01:21]
+Use jellybeans.vim.
+**** ~/GitHub/config_files/.vim/plugged/vim-airline-themes/autoload/airline/themes
+**** post in the following page the change
+***** https://stackoverflow.com/questions/52675624/gruvbox-airline-vim/54115433#54115433
+**** make a pull request to vim-arline-theme with the new working theme
+**** First try
+
+Partially succesful. Problem were that it was tested on MacOS and the colors have
+little to no contrast. The white color, for example, is being displayed at the terminal
+as gray. The colors of the straps seem to be pretty much what was expected.
+
+Normal mode: blue is too faded, white is grayish.
+The problem seems to realy on the N1 and N3 choices. I just going to make:
+
+#+BEGIN_SRC vim
+s:N1 = s:N2
+s:N3 = s:N2
+#+END_SRC
+
+Insert mode: works. Everything is readable.
+
+Visual mode: works.
+
+Replace mode: works.
+
+Made a pull request to vim-airline-themes [[https://github.com/vim-airline/vim-airline-themes/pull/166][repo]].
+**** Result
+This was a waste of time since it was not needed at all.
+Gruvbox is a plugin and when it is plugged it comes with a
+airline theme configured, no need to use vim-airlines or
+vim-airline-themes.
+
+** Nvim-R
+A list of the keybindings key accessed by =:h nvim-R= and
+going to the section 4.1.
+
+To start R in vim =\rf= and to compile (knit) beamer pdf
+=\kl=, to knit pdf =\kp=.
+
+Knit (cur file)                                    \kn
+  . Knit, BibTeX and PDF (cur file) (Linux/Unix)       \kb
+  . Knit and PDF (cur file)                            \kp
+  . Knit and Beamer PDF (cur file)                     \kl
+  . Knit and HTML (cur file, verbose)                  \kh
+  . Knit and ODT (cur file)                            \ko
+  . Knit and Word Document (cur file)                  \kw
+  . Markdown render (cur file)                         \kr
+  . Spin (cur file) (only .R)                          \ks
+
+[[https://hpcc.ucr.edu/manuals_linux-cluster_terminalIDE.html][HPCC: Working IDEs]]
+[[https://raw.githubusercontent.com/jalvesaq/Nvim-R/master/doc/Nvim-R.txt][Nvim-R]]
+[[https://blog.rstudio.com/2014/08/01/the-r-markdown-cheat-sheet/][Rmarkdown Cheatsheet]]
+** Emacs
+
+This section only has links to the emacs.org file
+
+[[file:emacs.org::*%20Inbox][{0/5} Inbox]]
+[[file:emacs.org::*Maintenance%20of%20Doom-emacs][Maintenance of Doom-emacs]]
+[[file:emacs.org::*Reference%20material][Reference material]]
+** VirtualBox
+Install =virtualbox-dkms=, but before it is needed to install
+=linux-headers-lts= to obtain the =vboxdrv= kernel module.
+** Neomutt
+
+Mutt-wizard is a program that can be used to setup accounts
+using isync/mbsync, rather than offlineimap. It works and now it
+has all the account set up.
+
+[[https://github.com/LukeSmithxyz/mutt-wizard][lukesmithxyz/mutt-wizard]]
+*** Manage accounts
+| Command   | Description                              |
+|-----------+------------------------------------------|
+| mw add    | add account                              |
+| mw ls     | list existing accounts                   |
+| mw pass   | revise an account's password             |
+| mw delete | delete an added account                  |
+| mw purge  | delete all accounts                      |
+| mw cron   | toggle/configure a cron job to sync mail |
+*** Keys
+| Key            | Description                                          |
+|----------------+------------------------------------------------------|
+| m              | send mail                                            |
+| d/u            | page down/page up                                    |
+| l              | open mail, or attachment                             |
+| h              | opposite of l                                        |
+| r/R            | reply/reply all                                      |
+| s              | save mail/attachment                                 |
+| gs/gi/ga/gd/gS | go to: sent/inbox/archive/drafts/spam                |
+| M/C            | move/copy, to a desired mailbox. ie MS, move to spam |
+| i#             | go to account #                                      |
+| ?              | see all shortcuts                                    |
+| C-j/C-k        | move down/up on the sidebar                          |
+| C-o            | open mailbox on the sidebar                          |
+
+*** Muttrc
+
+It seems pretty obvious to me, from the little time I spent
+in neomutt that I need to make a overhaul on the bindings,
+and there is a lot of options, but since I wanna keep it
+simple, I will try to remap only the most used. Another
+option is just to look for a ready and tested `muttrc` on
+the webs. Either way, use the official guide[^muttrc].
+
+I added some new functions to neomutt for viewing html and
+link opening using this
+[guide](https://demu.red/blog/2017/11/neomutt-macro-opening-texthtml-attachment-from-the-index-view/)
+by demu.red. ## Learning more about it
+
+*** Read the following guides:
+**** [Neomutt: Getting started](https://neomutt.org/guide/gettingstarted.html).
+[^muttrc]: [Manual page to
+muttrc](https://neomutt.org/man/neomuttrc).
+*** DEPRECATED - Setting up import mails
+
+Just open Yandex really, it is that simple. There's an
+option to make a tag for that specific mail. About ten
+minutes later it'll start to download the messages into your
+Yandex account.
+
+*** DEPRECATED - Sending emails
+
+In this burner account, sending emails was taking too long.
+If I closed the terminal session and opened again it would
+appear in the "sent" directory but when I checked in the
+receiver there was no message.
+
+Actually, there is a problem with it and seems to the be
+linked with smtp configuration which in the official [ guide
+](https://neomutt.org/guide/optionalfeatures.html#smtp) is
+listed to optional. I dont't know what smtp is good for,
+I'll guess is linked to sending the mail per se, so it is
+critical to set up. Other than that, there is this
+[issue](https://github.com/neomutt/neomutt/issues/1035) that
+point to it as well.
+
+Informations about Yandex smtp can be found [[ https://www.lifewire.com/what-are-the-yandex-mail-smtp-settings-1171304][here]]. A related
+post in Super User can be found [[https://emacs.stackexchange.com/questions/12927/reading-and-writing-email-with-emacs][here]].
+
+** Inkscape
+Inkscape is a really good program for editing diagrams and
+pictures for presentations.
+
+*** Convert .svg files to .png in batch
+
+#+BEGIN_SRC sh
+for i in *; do inkscape $i --export-png=`echo $i | sed -e 's/svg$/png/'`; done
+#+END_SRC
+** Python
+*** Get pip2 installed
+Create a directory and use wget to download and then install
+with the following command:
+
+#+BEGIN_SRC sh
+wget https://bootstrap.pypa.io/get-pip.py
+sudo python2 get-pip.py
+#+END_SRC
+*** Get pip installed
+
+#+BEGIN_SRC bash
+yay -s pip
+#+END_SRC
+** LaTeX
+*** Beamer
+From markdown the basic command is:
+
+#+BEGIN_SRC sh
+pandoc -t beamer my_source.md -o my_beamer.pdf
+#+END_SRC
+
+[[http://jeromyanglim.blogspot.com/2012/07/beamer-pandoc-markdown.html][Jeromy Anglim: Beamer-pandoc-markdown]]
+*** Package manager - tllocalmgr
+To manage packages enter =tllocalmgr= in the command line.
+
+*** Initial packages
+Packages installed using =yay=. Packages installed:
+- =texlive-core=
+- =texlive-latexextra=
+- =biber=
+- =abntex2=
+- =texlive-mhchem-bundle=
+- =auctex-git=
+
+Needed further configuration:
+*** apt-file
+On debian based distros use =apt-file= to evaluate in latex
+package a giver =.sty= package is located so it can be update or
+installed.
+
+Use the following syntax =apt-file -x search '/package$.sty'=
+
+** Markdown
+[[http://svmiller.com/blog/2015/02/moving-from-beamer-to-r-markdown/][SV Miller: From Beamer to RMarkdown]]
+** Pacman
+
+*** Fix for =libidn2.so.0 missing=
+
+Quick fix is to use the following code
+#+BEGIN_SRC sh
+sudo ln -s /usr/lib/libidn2.so /usr/lib/libidn2.so.0
+#+END_SRC
+
+More reference can be found in this [[https://www.ostechnix.com/fix-pacman-error-loading-shared-libraries-error-arch-linux/][guide]].
+
+It was later found a issue when trying to update the system
+where it says:
+
+#+begin_quote
+(205/205) checking keys in keyring
+(205/205) checking package integrity
+(205/205) loading package files
+(205/205) checking for file conflicts
+error: failed to commit transaction (conflicting files)
+libidn2: /usr/lib/libidn2.so.0 exists in filesystem
+Errors occurred, no packages were upgraded.
+#+end_quote
+
+Tried deleting the symlink but it only made it show the same
+error that was corrected with the symlink. Without the
+symlink, pacman won't run. Test this: [[https://www.ostechnix.com/fix-pacman-error-loading-shared-libraries-error-arch-linux/][ostechnix solution]]
+
+As stated above, the =libidn2.so.0= file is a symlink to the
+=libidn2.so=, which in turn is a symlink to
+=libidn2.so.4.0.0=. The solution I'm going to use is to make
+=libidn2.so.0= symlink directly to =libdin2.so.4.0.0=.
+
+#+BEGIN_SRC bash
+sudo rm -rf libidn2.so.0
+sudo ln -s /usr/lib/libidn2.so.4.0.0 /usr/lib/libidn2.so.0
+#+END_SRC
+
+This change didn't make the system break but didn't solve
+the issue. The same error message is being shown.
+
+Next attempt will be to remove =libidn2.so.0= and see what
+happens.
+
+#+BEGIN_SRC bash
+sudo rm -rf /usr/lib/libidn2.so.0
+#+END_SRC
+
+The deletion of the file gives the following error when
+running a =pacman -Syu= command:
+
+#+begin_quote
+pacman: error while loading shared libraries: libidn2.so.0: cannot open shared object file: No such file or directory
+#+end_quote
+
+So, this symlink is necessary for =pacman= to run.
+
+Next attempt will only involve a reboot in the system.
+
+**** Solution
+Run the following command to force the installation of
+=libidn2=:
+
+#+BEGIN_SRC bash
+sudo pacman -S libidn2 --force
+#+END_SRC
+
+This will substitute the current file by the ones that are
+currently in the repository. Then it'll say that there's no
+=libidn2.so.4= file. You need to create it as a symlink of
+the same file of =libidn2.so.0= which is this case was
+=libidn2.so.0.3.5=.
+
+#+BEGIN_SRC bash
+sudo ln -s /usr/lib/libidn2.so.0.3.5 /usr/lib/libidn2.so.4
+#+END_SRC
+
+After this you can run the =pacman= desired command and it
+should work fine.
+
+[[https://www.ostechnix.com/fix-pacman-error-loading-shared-libraries-error-arch-linux/][OSTechnix solution]]
+
+*** Find library packages
+
+Related to the `libidn2` missing issue, there is a [[https://www.ostechnix.com/fix-pacman-error-loading-shared-libraries-error-arch-linux/][pkgs.org]]
+which is a very useful repository for library packages used
+in various distributions.
+
+*** How to ignore a package
+Use the following command to edit the line =IgnorePkg= and
+insert the desired package.
+
+#+BEGIN_SRC bash
+sudo vim /etc/pacman.conf
+#+END_SRC
+
+[[https://www.ostechnix.com/safely-ignore-package-upgraded-arch-linux/][source]]
+
+*** paccache
+It is a command that can be used to find unused cached packages.
+
+To find the remaining cache from uninstalled packages:
+#+BEGIN_SRC bash
+paccache -dvuk0
+#+END_SRC
+
+To remove:
+#+BEGIN_SRC bash
+paccache -rvuk0
+#+END_SRC
+
+[[https://unix.stackexchange.com/questions/137320/how-to-delete-old-packages-installed-by-pacman-in-arch-linux][StackExchange]]
+** Newsboat
+The configuration is pretty straight forward. Just listing
+some references for use later.
+
+[[https://www.youtube.com/watch?v=jHjdWvNucJQ][iBSD: newsboat]]
+** Pywal
+It is a utility that enables the generation of colorschemes
+based on the colors of the wallpaper.
+
+[[https://www.youtube.com/watch?v=DdJb2N8twbU][Terminal Root]]
+
+Configurations in the =.zshrc=:
+#+BEGIN_SRC bash
+## Import colorscheme from 'wal' asynchronously
+# &   # Run the process in the background.
+# ( ) # Hide shell job control messages.
+(cat ~/.cache/wal/sequences &)
+
+# Alternative (blocks terminal for 0-3ms)
+cat ~/.cache/wal/sequences
+
+# To add support for TTYs this line can be optionally added.
+source ~/.cache/wal/colors-tty.sh
+
+# function to integrate wal and feh
+wal-scale() {
+    wal -n -i "$@"
+    feh --bg-scale "$(< "${HOME}/.cache/wal/wal")"
+}
+
+#+END_SRC
+
+To load =wal= at startup add the following to =.xprofile= or
+other program that does runs on initilization like =.xinit=:
+#+BEGIN_SRC bash
+# Add this to your .xinitrc or whatever file starts programs on startup.
+# -R restores the last colorscheme that was in use.
+wal -R
+
+#+END_SRC
+
+To have =emacs= generating a custom theme it is needed to
+configure in =init.el= and =config.el= the following code:
+#+BEGIN_SRC emacs-lisp
+; on init.el
+;; ewal
+(require 'ewal)
+(when (ewal-load-wal-colors)
+  (custom-set-faces
+   `(line-number ((t (:foreground ,(ewal-get-color 'magenta 4)))))))
+
+;; spacemacs/user-init
+(add-to-list 'load-path "~/projects/ewal")
+(add-to-list 'load-path "~/projects/ewal/spacemacs-themes")
+(require 'ewal-spacemacs-themes)
+(load-theme 'ewal-spacemacs-modern t)
+;; spacemacs/user-init
+(add-to-list 'load-path "~/projects/ewal/evil-cursors")
+(require 'ewal-evil-cursors)
+(ewal-evil-cursors-get-spacemacs-colors :apply t)
+
+; on config.el
+(enable-theme 'ewal-spacemacs-modern)
+#+END_SRC
+** Polybar
+[[https://github.com/polybar/polybar#building-from-source][github/polybar]]
+[[https://www.reddit.com/r/unixporn/comments/bpfohx/i3gaps_chilli_milli_vanilli/][Nice customization on r/unixporn]]
+https://github.com/polybar/polybar/wiki
+
+Implementing autohide
+https://www.reddit.com/r/bspwm/comments/cnah71/polybar_doesnt_hide_in_fullscreen/
+** GRUB
+
+[[https://www.youtube.com/watch?v=BsFoeJ1FKNg][Terminal Root]]
+
+** Selfhosting
+Items needed:
+ - Raspberry Pi: preço ~R$160
+ - MicroSD card
+ - Router with forwarding (or something like that)
+ - Ethernet cable
+ - Arch Linux ARM
+
+There are 5 videos in total and he uses nextcloud.
+[[https://www.youtube.com/playlist?list=PLkxWXio1KmRoYK9y3tgrImS8GTkeUVOzZ][Wolfgangs series on selfhosting]]
+
+** Nextcloud
+It is a cloud storage solution that is based on a server located at
+home.
+** xrandr
+Really simple, just plug and play.
+
+To clone and scale with perfection just calculate the ratio
+between the output resolution and the input. For example,
+the ratio between the resolution 1920x1080 and 1280x800 is
+1.5x1.35. So we apply this ratio to the =--scale= option:
+
+#+BEGIN_SRC shell
+xrandr --output HDMI1 --mode 1920x1080 --output LVDS1 --primary --scale 1.5x1.35
+#+END_SRC
+
+For more information just see the man page. The =arandr=
+software for some odd reason doesn't come with the scale
+function.
+
+When unplugging the external monitor, it'll be necessary to
+rescale the resolution to 1280x800.
+
+#+BEGIN_SRC shell
+xrandr --output LVDS1 --primary --scale 1x1
+#+END_SRC
+
+Further configurations that are available
+[[https://wiki.ubuntu.com/X/Config/Resolution#Adding_undetected_resolutions][X/Config/Resolution - Ubuntu Wiki]]
+** Xresources
+To load a change in the =.Xresources= file run:
+
+#+BEGIN_SRC bash
+xrdb .Xresources
+#+END_SRC
+** speedtest-cli
+A tool to test download and upload speeds from the command line.
+Install with =yay -s speedtest-cli= and run it with =speedtest= command.
+** youtube-dl
+*** Error: fail to extract signature
+Error =fail to extract signature= might be solved by installing =pip=.
+
+It is required  =ffmpeg= to solve errors.
+
+*** download audio from video
+A better way to download audio:
+#+BEGIN_SRC bash
+youtube-dl --extract-audio --audio-format mp3 -o "%(title)s.%(ext)s" <url to playlist>
+#+END_SRC
+*** Error: unable to extract video title
+Download from source:
+#+BEGIN_SRC bash
+sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+sudo chmod a+rx /usr/local/bin/youtube-dl
+#+END_SRC
+** mpv
+How to get the latest version of mpv:
+#+BEGIN_SRC bash
+sudo apt-add-repository ppa:mc3man/mpv-tests
+
+#+END_SRC
+https://howto-ubuntunew.blogspot.com/2016/09/how-to-install-latest-mpv-media-player.html
+** Screen and Irssi
+
+*** Quick commands for using =screen=:
+
+#+BEGIN_SRC sh
+# create new named session in screen
+screen -S session
+
+# list sessions
+screen -list
+
+# reattach session
+screen -r session-name
+
+# kill session
+screen -X -S session-name kill
+
+#+END_SRC
+
+*** Quick commands for using =irssi=
+
+#+BEGIN_SRC sh
+
+# connect to network
+$ irssi -c freenode
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+## or inside irssi /connect freenode
+
+# identify with NickServ
+/msg NickServ IDENTIFY nick password
+
+#+END_SRC ``` ```
+
+For more reference visit [Quadpoint's
+guide](https://quadpoint.org/articles/irssi/).
+
+** ASCII characters
+[[http://www.patorjk.com/software/taag/#p=display&f=Roman&t=GNU%2FLinux][Patorjk]]
+** CUPS - Common Unix Printing Service
+Install it and run =sudo systemctl enable
+org.cups.cupsd.service=. To configure the printers access =localhost:631=.
+
+There is a problem with CUPS:
+[[https://searx.me/?q=wrong%20password%20forbidden%20cups%20printer&ia=web][searx query]]
+
+Reference:
+[[https://www.maketecheasier.com/set-up-a-printer-in-linux/][maketecheasier]]
+
+** man command
+To output a man page to pdf run:
+
+#+BEGIN_SRC bash
+man -Tpdf command | zathura -
+#+END_SRC
+
+** vifm
+** snap
+How to install:
+https://snapcraft.io/install/snap-store/mint
+** setxkbmap
+Setting to abnt2 and portuguese using the terminal.
+
+#+BEGIN_SRC bash
+setxkbmap -model abnt2 -layout br -variant abnt2
+
+#+END_SRC
+** [[file:20200327191358-qutebrowser.org][Qutebrowser]]
+Build from source. First download a version. Extract and then run:
+#+begin_src bash
+scripts/
+python3 mkvenv.py
+#+end_src
+For more visit
+[[https://qutebrowser.org/doc/install.html#_official_vs_community_maintained][Installing qutebrowser | qutebrowser]]
+** ssh
+You can transfer files using ssh using two protocols, sftp or scp.
+[[https://www.youtube.com/watch?v=w_OwmqjAcn0][How to Transfer Files Using SSH - YouTube]]
+
+* Studying the system
+** Books
+*** Tracy Kidder - The soul of a new machine
+*** The linux programming interface
+*** O'Reilly - JavaScript: the good parts
+*** Niklaus Wirth - Algorithms + data structure = programs
